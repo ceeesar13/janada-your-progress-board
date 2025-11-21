@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target } from "lucide-react";
+import { Target, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface GoalFormProps {
   onGoalCreated: (goalTitle: string, pillars: string[]) => void;
@@ -12,11 +14,44 @@ interface GoalFormProps {
 const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
   const [goalTitle, setGoalTitle] = useState("");
   const [pillars, setPillars] = useState<string[]>(["", "", "", "", "", "", "", ""]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handlePillarChange = (index: number, value: string) => {
     const newPillars = [...pillars];
     newPillars[index] = value;
     setPillars(newPillars);
+  };
+
+  const handleGeneratePillars = async () => {
+    if (!goalTitle.trim()) {
+      toast.error("Primero escribe tu objetivo");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-pillars", {
+        body: { goal: goalTitle },
+      });
+
+      if (error) {
+        console.error("Error generating pillars:", error);
+        toast.error("Error al generar sugerencias");
+        return;
+      }
+
+      if (data?.pillars && Array.isArray(data.pillars)) {
+        setPillars(data.pillars);
+        toast.success("¡Pilares sugeridos! Puedes editarlos antes de crear el tablero");
+      } else {
+        toast.error("Error al procesar las sugerencias");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error al conectar con el servicio de IA");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -58,9 +93,22 @@ const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
             </div>
 
             <div className="space-y-3">
-              <Label className="text-base font-semibold">
-                Define tus 8 pilares
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">
+                  Define tus 8 pilares
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGeneratePillars}
+                  disabled={!goalTitle.trim() || isGenerating}
+                  className="gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {isGenerating ? "Generando..." : "Sugerir con IA"}
+                </Button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {pillars.map((pillar, index) => (
                   <Input
