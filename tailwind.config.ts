@@ -57,6 +57,26 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        progress: {
+          0: "hsl(var(--progress-0))",
+          1: "hsl(var(--progress-1))",
+          2: "hsl(var(--progress-2))",
+          3: "hsl(var(--progress-3))",
+          4: "hsl(var(--progress-4))",
+          5: "hsl(var(--progress-5))",
+        },
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-card': 'var(--gradient-card)',
+      },
+      boxShadow: {
+        'soft': 'var(--shadow-soft)',
+        'medium': 'var(--shadow-medium)',
+        'strong': 'var(--shadow-strong)',
+      },
+      transitionProperty: {
+        'smooth': 'var(--transition-smooth)',
       },
       borderRadius: {
         lg: "var(--radius)",
