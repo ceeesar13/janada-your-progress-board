@@ -18,18 +18,19 @@ const ActivityList = ({ activities, goal }: ActivityListProps) => {
     return "bg-primary/20 text-primary";
   };
 
-  const getCellName = (cellId: string): string => {
-    for (const pillar of goal.pillars) {
-      const cellIndex = pillar.cells.findIndex(c => c.id === cellId);
-      if (cellIndex !== -1) {
-        return `${pillar.name} #${cellIndex + 1}`;
+  const getTaskName = (taskId: string): string => {
+    for (const area of goal.keyAreas) {
+      const taskIndex = area.tasks.findIndex(t => t.id === taskId);
+      if (taskIndex !== -1) {
+        const task = area.tasks[taskIndex];
+        return `${area.name} - ${task.description}`;
       }
     }
-    return cellId;
+    return taskId;
   };
 
   return (
-    <Card className="shadow-medium">
+    <Card className="shadow-medium h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary" />
@@ -37,7 +38,7 @@ const ActivityList = ({ activities, goal }: ActivityListProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
+        <ScrollArea className="h-[500px] pr-4">
           {activities.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <p>Aún no hay actividades registradas</p>
@@ -63,9 +64,9 @@ const ActivityList = ({ activities, goal }: ActivityListProps) => {
                   </div>
 
                   <div className="flex flex-wrap gap-1">
-                    {activity.affectedCells.map((cellId) => (
-                      <Badge key={cellId} variant="outline" className="text-xs">
-                        {getCellName(cellId)}
+                    {activity.affectedTasks.map((taskId) => (
+                      <Badge key={taskId} variant="outline" className="text-xs">
+                        {getTaskName(taskId)}
                       </Badge>
                     ))}
                   </div>

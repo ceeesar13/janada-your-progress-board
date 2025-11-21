@@ -31,11 +31,11 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Eres un asistente experto en planificación y desarrollo personal. Tu tarea es sugerir 8 pilares fundamentales que ayuden a alcanzar un objetivo específico. Los pilares deben ser concretos, accionables y complementarios entre sí. Responde ÚNICAMENTE con un array JSON de 8 strings, sin texto adicional.",
+            content: "Eres un experto en el Método Harada de desarrollo personal. Tu tarea es sugerir 8 áreas clave fundamentales que ayuden a alcanzar un objetivo específico, siguiendo la filosofía Harada. Las áreas deben ser concretas, accionables y representar los pilares fundamentales del objetivo. Responde ÚNICAMENTE con un array JSON de 8 strings, sin texto adicional.",
           },
           {
             role: "user",
-            content: `Objetivo: "${goal}"\n\nSugiere 8 pilares fundamentales para lograr este objetivo. Cada pilar debe ser una categoría específica de acciones o aprendizajes. Responde solo con el array JSON, por ejemplo: ["Pilar 1", "Pilar 2", ...]`,
+            content: `Objetivo central: "${goal}"\n\nSiguiendo el Método Harada, sugiere 8 áreas clave fundamentales para lograr este objetivo. Cada área debe representar un pilar esencial. Responde solo con el array JSON, por ejemplo: ["Área 1", "Área 2", ...]`,
           },
         ],
       }),
@@ -91,13 +91,13 @@ serve(async (req) => {
           .slice(0, 8);
       }
 
-      // Ensure we have exactly 8 pillars
+      // Ensure we have exactly 8 areas
       while (pillars.length < 8) {
-        pillars.push(`Pilar ${pillars.length + 1}`);
+        pillars.push(`Área clave ${pillars.length + 1}`);
       }
       pillars = pillars.slice(0, 8);
 
-      console.log("Parsed pillars:", pillars);
+      console.log("Parsed areas:", pillars);
 
       return new Response(JSON.stringify({ pillars }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
