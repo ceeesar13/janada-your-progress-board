@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Goal, Activity, Pillar, Cell } from "@/types";
+import { Goal, Activity, KeyArea, Task } from "@/types";
 import GoalForm from "@/components/GoalForm";
 import Board from "@/components/Board";
 import ActivityForm from "@/components/ActivityForm";
@@ -11,35 +11,41 @@ const Index = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
 
-  const handleGoalCreated = (goalTitle: string, pillarNames: string[]) => {
-    const pillars: Pillar[] = pillarNames.map((name, index) => ({
-      id: `pillar-${index}`,
-      name,
-      order: index,
-      cells: Array.from({ length: 8 }, (_, cellIndex) => ({
-        id: `pillar-${index}-cell-${cellIndex}`,
-        pillarId: `pillar-${index}`,
-        order: cellIndex,
+  const handleGoalCreated = (goalTitle: string, areaNames: string[]) => {
+    // Create 8 key areas, each with 8 tasks
+    const keyAreas: KeyArea[] = areaNames.map((name, index) => {
+      const tasks: Task[] = Array.from({ length: 8 }, (_, taskIndex) => ({
+        id: `area-${index}-task-${taskIndex}`,
+        areaId: `area-${index}`,
+        description: `Tarea ${taskIndex + 1}`,
+        position: taskIndex,
         progress: 0,
-      })),
-    }));
+      }));
+
+      return {
+        id: `area-${index}`,
+        name,
+        position: index,
+        tasks,
+      };
+    });
 
     const newGoal: Goal = {
       id: "goal-1",
       title: goalTitle,
       createdAt: new Date(),
-      pillars,
+      keyAreas,
     };
 
     setGoal(newGoal);
-    toast.success("¡Tablero creado exitosamente!");
+    toast.success("¡Objetivo y grid Harada creados! Ahora define tus 64 tareas");
   };
 
   const handleActivitySubmit = (activityData: {
     message: string;
     date: Date;
     impact: number;
-    affectedCells: string[];
+    affectedTasks: string[];
   }) => {
     if (!goal) return;
 
@@ -53,20 +59,23 @@ const Index = () => {
     toast.success("Actividad registrada");
   };
 
+  const handleCellClick = (cellId: string, cellType: "goal" | "area" | "task") => {
+    console.log(`Clicked ${cellType}:`, cellId);
+    // Future: Could open edit modal based on cell type
+  };
+
   if (!goal) {
     return <GoalForm onGoalCreated={handleGoalCreated} />;
   }
 
   return (
-    <div className="grid lg:grid-cols-3 gap-6 p-4 md:p-6">
+    <div className="grid lg:grid-cols-3 gap-6 p-4 md:p-6 bg-background">
       <div className="lg:col-span-2">
         <Board
           goal={goal}
           activities={activities}
           onAddActivity={() => setIsActivityFormOpen(true)}
-          onCellClick={(cellId) => {
-            console.log("Cell clicked:", cellId);
-          }}
+          onCellClick={handleCellClick}
         />
       </div>
       

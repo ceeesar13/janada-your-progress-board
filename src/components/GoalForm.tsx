@@ -72,9 +72,9 @@ const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
               <Target className="w-8 h-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold">Crea tu objetivo en Janada</CardTitle>
+          <CardTitle className="text-3xl font-bold">Método Harada - Janada</CardTitle>
           <CardDescription className="text-base">
-            Define tu goal y los 8 pilares que lo sostienen. Cada pilar tendrá 8 recuadros para trackear tu progreso.
+            Define tu objetivo central y las 8 áreas clave. Luego podrás desarrollar 8 tareas específicas por cada área (64 en total).
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -95,7 +95,7 @@ const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-base font-semibold">
-                  Define tus 8 pilares
+                  Define tus 8 áreas clave
                 </Label>
                 <Button
                   type="button"
@@ -113,7 +113,7 @@ const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
                 {pillars.map((pillar, index) => (
                   <Input
                     key={index}
-                    placeholder={`Pilar ${index + 1}`}
+                    placeholder={`Área clave ${index + 1}`}
                     value={pillar}
                     onChange={(e) => handlePillarChange(index, e.target.value)}
                     className="h-11"
@@ -127,7 +127,7 @@ const GoalForm = ({ onGoalCreated }: GoalFormProps) => {
               className="w-full h-12 text-lg font-semibold"
               disabled={!allFilled}
             >
-              Crear tablero
+              Crear grid Harada 9×9
             </Button>
           </form>
         </CardContent>

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Goal } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -30,37 +29,37 @@ interface ActivityFormProps {
     message: string;
     date: Date;
     impact: number;
-    affectedCells: string[];
+    affectedTasks: string[];
   }) => void;
 }
 
 const ActivityForm = ({ open, onClose, goal, onSubmit }: ActivityFormProps) => {
   const [message, setMessage] = useState("");
   const [impact, setImpact] = useState<string>("3");
-  const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
+  const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
 
-  const handleCellToggle = (cellId: string) => {
-    const newSelected = new Set(selectedCells);
-    if (newSelected.has(cellId)) {
-      newSelected.delete(cellId);
+  const handleTaskToggle = (taskId: string) => {
+    const newSelected = new Set(selectedTasks);
+    if (newSelected.has(taskId)) {
+      newSelected.delete(taskId);
     } else {
-      newSelected.add(cellId);
+      newSelected.add(taskId);
     }
-    setSelectedCells(newSelected);
+    setSelectedTasks(newSelected);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && selectedCells.size > 0) {
+    if (message.trim() && selectedTasks.size > 0) {
       onSubmit({
         message,
         date: new Date(),
         impact: parseInt(impact),
-        affectedCells: Array.from(selectedCells),
+        affectedTasks: Array.from(selectedTasks),
       });
       setMessage("");
       setImpact("3");
-      setSelectedCells(new Set());
+      setSelectedTasks(new Set());
       onClose();
     }
   };
@@ -71,7 +70,7 @@ const ActivityForm = ({ open, onClose, goal, onSubmit }: ActivityFormProps) => {
         <DialogHeader>
           <DialogTitle>Registrar nueva actividad</DialogTitle>
           <DialogDescription>
-            Describe lo que hiciste y selecciona los recuadros impactados
+            Describe lo que hiciste y selecciona las tareas impactadas
           </DialogDescription>
         </DialogHeader>
 
@@ -104,25 +103,25 @@ const ActivityForm = ({ open, onClose, goal, onSubmit }: ActivityFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label>Recuadros impactados ({selectedCells.size} seleccionados)</Label>
+            <Label>Tareas impactadas ({selectedTasks.size} seleccionadas)</Label>
             <ScrollArea className="h-[200px] rounded-md border p-4">
               <div className="space-y-4">
-                {goal.pillars.map((pillar) => (
-                  <div key={pillar.id} className="space-y-2">
-                    <p className="font-semibold text-sm">{pillar.name}</p>
-                    <div className="grid grid-cols-4 gap-2">
-                      {pillar.cells.map((cell, idx) => (
-                        <div key={cell.id} className="flex items-center space-x-2">
+                {goal.keyAreas.map((area) => (
+                  <div key={area.id} className="space-y-2">
+                    <p className="font-semibold text-sm">{area.name}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {area.tasks.map((task, idx) => (
+                        <div key={task.id} className="flex items-start space-x-2">
                           <Checkbox
-                            id={cell.id}
-                            checked={selectedCells.has(cell.id)}
-                            onCheckedChange={() => handleCellToggle(cell.id)}
+                            id={task.id}
+                            checked={selectedTasks.has(task.id)}
+                            onCheckedChange={() => handleTaskToggle(task.id)}
                           />
                           <label
-                            htmlFor={cell.id}
-                            className="text-sm cursor-pointer"
+                            htmlFor={task.id}
+                            className="text-sm cursor-pointer leading-tight"
                           >
-                            #{idx + 1}
+                            #{idx + 1}: {task.description}
                           </label>
                         </div>
                       ))}
@@ -137,7 +136,7 @@ const ActivityForm = ({ open, onClose, goal, onSubmit }: ActivityFormProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={!message.trim() || selectedCells.size === 0}>
+            <Button type="submit" disabled={!message.trim() || selectedTasks.size === 0}>
               Registrar
             </Button>
           </DialogFooter>
