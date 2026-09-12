@@ -1,73 +1,42 @@
-# Welcome to your Lovable project
+# Janada — una meta en una cuadrícula de 9×9
 
-## Project info
+Tablero de progreso basado en el **método Harada**: una meta central, ocho áreas clave alrededor de ella, y ocho tareas concretas por cada área. Una cuadrícula de 9×9, 64 tareas, una sola meta.
 
-**URL**: https://lovable.dev/projects/8bdeb095-ab43-4400-9fca-f17d010acc08
+Proyecto personal. Construido con Lovable sobre Vite + React + TypeScript, con Supabase para persistencia.
 
-## How can I edit this code?
+## El problema
 
-There are several ways of editing your application.
+Una meta grande escrita en una frase no sirve de nada, porque no te dice qué hacer un martes cualquiera. El método Harada resuelve eso: te obliga a bajar de "quiero X" a 64 acciones específicas. Lo que el método no resuelve en papel es el seguimiento — una vez llenas la cuadrícula, no hay forma de saber si te estás moviendo.
 
-**Use Lovable**
+Janada agrega esa capa. Registras actividades con fecha, un impacto del 1 al 5, y las tareas de la cuadrícula a las que afecta cada una. El progreso de cada celda se deriva de ese registro.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8bdeb095-ab43-4400-9fca-f17d010acc08) and start prompting.
+## Modelo de datos
 
-Changes made via Lovable will be committed automatically to this repo.
+| Entidad | Qué representa |
+| --- | --- |
+| `Goal` | La meta central. Ocupa el centro de la cuadrícula (índice 4 de 9). |
+| `KeyArea` | Una de las 8 áreas clave alrededor del centro. Posición 0–7. |
+| `Task` | Una de las 8 tareas de un área. Progreso 0–100. |
+| `Activity` | Lo que hiciste: mensaje, fecha, impacto 1–5 y las tareas que afecta. |
 
-**Use your preferred IDE**
+La decisión de diseño que importa: **el progreso es derivado, no editado**. Una tarea avanza porque registraste actividades que la afectan, no porque arrastraste una barra hasta donde te hacía sentir bien.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Estructura
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+| Archivo | Responsabilidad |
+| --- | --- |
+| `src/types/index.ts` | Modelo de dominio y helpers de posición de la cuadrícula. |
+| `src/components/HaradaGrid.tsx` | La cuadrícula 9×9 y el posicionamiento de áreas y tareas. |
+| `src/components/Board.tsx` | Composición del tablero. |
+| `src/components/GoalForm.tsx` | Creación y edición de la meta y sus áreas clave. |
+| `src/components/ActivityForm.tsx` | Registro de actividades con impacto y tareas afectadas. |
+| `src/components/ActivityList.tsx` | Historial de actividades. |
+| `src/integrations/supabase` | Cliente y tipos generados de Supabase. |
 
-Follow these steps:
+## Cómo correrlo
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Necesitas Node.js y npm. Instala dependencias con `npm i` y levanta el servidor de desarrollo con `npm run dev`.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Estado
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8bdeb095-ab43-4400-9fca-f17d010acc08) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Base funcional, sin pulir. La cuadrícula, el modelo de dominio y el registro de actividades funcionan. Lo que falta: autenticación por usuario, visualización del progreso en el tiempo y export de la cuadrícula. Lo voy a retomar.
